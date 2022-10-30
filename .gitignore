@@ -41,8 +41,6 @@ yarn-error.log
 # BUCK
 buck-out/
 \.buckd/
-*.keystore
-!debug.keystore
 
 # fastlane
 #
@@ -312,6 +310,7 @@ render.experimental.xml
 # Keystore files
 *.jks
 *.keystore
+!debug.keystore
 
 # Google Services (e.g. APIs or Firebase)
 google-services.json
@@ -320,3 +319,5 @@ google-services.json
 *.hprof
 
 # End of https://www.toptal.com/developers/gitignore/api/reactnative
+# react-native-config codegen
+ios/tmp.xcconfig
