@@ -15,6 +15,15 @@ Setup environment in React Native
 - [Tutorial](https://itzone.com.vn/en/article/working-with-environment-variables-in-react-native/)
 
 ## Developement
+Install package
+
+```sh
+# Install npm packages
+npm install
+# Install pod
+cd ios
+pod install
+```
 
 Build Android
 
@@ -73,3 +82,17 @@ For more environments build, please refer script in `package.json`
     ```
 
 2.  Publish .iap file [publishing](https://reactnative.dev/docs/publishing-to-app-store)
+
+## About Project
+### Document
+### Techstack
++ TypeScript
++ React Navigation
++ GraphQL (Apollo Client, Hasura)
++ Redux
++ React Hook
+### Architecture
+
+
+### Folder structure
+

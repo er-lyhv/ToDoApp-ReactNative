@@ -8,113 +8,104 @@
  * @format
  */
 
-import React, { type PropsWithChildren } from 'react';
+import { NavigationContainer } from '@react-navigation/native'
+import { createNativeStackNavigator } from '@react-navigation/native-stack';
+import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
+import { ApolloClient, InMemoryCache, ApolloProvider } from '@apollo/client';
 import {
-  SafeAreaView,
-  ScrollView,
-  StatusBar,
-  StyleSheet,
-  Text,
-  useColorScheme,
-  View,
+  Image,
 } from 'react-native';
 
-import {
-  Colors,
-  DebugInstructions,
-  Header,
-  LearnMoreLinks,
-  ReloadInstructions,
-} from 'react-native/Libraries/NewAppScreen';
+import tasks from './assets/tasks.png'
+import analytics from './assets/analytics.png'
+import TaskList from './src/TaskList';
+import Analytics from './src/Analytics';
+import AddTask from './src/AddTask';
 
-const Section: React.FC<
-  PropsWithChildren<{
-    title: string;
-  }>
-> = ({ children, title }) => {
-  const isDarkMode = useColorScheme() === 'dark';
+const cache = new InMemoryCache()
+const client = new ApolloClient({
+  uri: 'https://smooth-gecko-53.hasura.app/v1/graphql',
+  headers: {
+    'x-hasura-admin-secret': '5WRABn68TQflvPvfp91U5wvaWavprLAg20xYX32Zxjjocg8Uv2eEsliNiJaY3SRy',
+    'content-type': 'content-type'
+  },
+  cache,
+  defaultOptions: { watchQuery: { fetchPolicy: 'cache-and-network' } },
+})
+const Tab = createBottomTabNavigator();
+const Stack = createNativeStackNavigator();
+import { store } from './src/redux/store'
+import { Provider } from 'react-redux'
+const MainTab = () => {
   return (
-    <View style={styles.sectionContainer}>
-      <Text
-        style={[
-          styles.sectionTitle,
-          {
-            color: isDarkMode ? Colors.white : Colors.black,
-          },
-        ]}>
-        {title}
-      </Text>
-      <Text
-        style={[
-          styles.sectionDescription,
-          {
-            color: isDarkMode ? Colors.light : Colors.dark,
-          },
-        ]}>
-        {children}
-      </Text>
-    </View>
-  );
-};
+    <Tab.Navigator screenOptions={{
+      tabBarStyle: {
+        backgroundColor: 'white',
+        position: 'absolute',
+        height: 60,
+      },
+      tabBarActiveTintColor: 'red',
+      tabBarInactiveTintColor: 'gray',
+    }
+    }>
+      <Tab.Screen
+        name="Tasks"
+        component={TaskList}
+        options={{
+          tabBarIcon: ({ focused }) => (
+            TaskIcon(focused)
+          )
+        }}
+      />
+      <Tab.Screen name="Analytics" component={Analytics} options={{
+        tabBarIcon: ({ focused }) => (
+          AnalyticsIcon(focused)
+        )
+      }} />
+    </Tab.Navigator >
+  )
+}
+const AnalyticsIcon = (focused: boolean) => {
+  return (
+    <Image source={analytics} style={{
+      width: 22,
+      height: 22,
+      tintColor: focused ? 'red' : 'gray',
+
+    }}></Image>
+  )
+}
+
+const TaskIcon = (focused: boolean) => {
+  return (
+    <Image source={tasks} style={{
+      width: 22,
+      height: 22,
+      tintColor: focused ? 'red' : 'gray',
+
+    }}></Image>
+  )
+}
 
 const App = () => {
-  const isDarkMode = useColorScheme() === 'dark';
-
-  const backgroundStyle = {
-    backgroundColor: isDarkMode ? Colors.darker : Colors.lighter,
-  };
-
   return (
-    <SafeAreaView style={backgroundStyle}>
-      <StatusBar
-        barStyle={isDarkMode ? 'light-content' : 'dark-content'}
-        backgroundColor={backgroundStyle.backgroundColor}
-      />
-      <ScrollView
-        contentInsetAdjustmentBehavior="automatic"
-        style={backgroundStyle}>
-        <Header />
-        <View
-          style={{
-            backgroundColor: isDarkMode ? Colors.black : Colors.white,
-          }}>
-          <Section title="Step One">
-            Edit <Text style={styles.highlight}>App.tsx</Text> to change this
-            screen and then come back to see your edits.
-          </Section>
-          <Section title="See Your Changes">
-            <ReloadInstructions />
-          </Section>
-          <Section title="Debug">
-            <DebugInstructions />
-          </Section>
-          <Section title="Learn More">
-            Read the docs to discover what to do next:
-          </Section>
-          <LearnMoreLinks />
-        </View>
-      </ScrollView>
-    </SafeAreaView>
+    <Provider store={store}>
+      <ApolloProvider client={client}>
+        <NavigationContainer>
+          <Stack.Navigator>
+            <Stack.Screen name="Main" component={MainTab} options={{
+              headerShown: false
+            }} />
+            <Stack.Screen name="AddTask" component={AddTask} options={{
+              headerTitleAlign: 'center',
+              title: 'New Task',
+            }} />
+          </Stack.Navigator>
+        </NavigationContainer >
+      </ApolloProvider>
+    </Provider>
   );
 };
 
-const styles = StyleSheet.create({
-  sectionContainer: {
-    marginTop: 32,
-    paddingHorizontal: 24,
-  },
-  sectionTitle: {
-    fontSize: 24,
-    fontWeight: '600',
-  },
-  sectionDescription: {
-    marginTop: 8,
-    fontSize: 18,
-    fontWeight: '400',
-  },
-  highlight: {
-    fontWeight: '700',
-  },
-});
 
 export default App;
